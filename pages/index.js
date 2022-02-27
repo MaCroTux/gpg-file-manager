@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import UploadGpgFile from '../src/component/FileUpload/GpgFileUpload'
 
 export default function Home() {
   return (
@@ -17,7 +18,10 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1>GPG Encript file</h1>
+        <h1 style={{marginTop: 30}}>GPG Encript file</h1>
+        <hr />
+        <UploadGpgFile/>
+        <hr />
         <div className="list-group">
             <a href="#" className="list-group-item list-group-item-action active" aria-current="true">
               File encrypt history

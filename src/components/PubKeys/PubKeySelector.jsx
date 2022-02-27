@@ -13,8 +13,8 @@ export const PubKeySelector = ({pubKeyRef}) => {
             })
     }, [])
 
-    const getKeyList = async (host) => {
-        const res = await fetch(`${router.basePath}/api/pubkey`)
+    const getKeyList = async () => {
+        const res = await fetch(`${router.basePath}/api/get-pubkey`)
       
         return await res.json()
     }

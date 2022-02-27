@@ -9,7 +9,7 @@ export const config = {
 };
 
 const get = async (req, res) => {
-  let keyList = fs.readdirSync(path.dirname(`${DIR_PUB_KEY}/*/`)).map((fileName) => {
+  let keyList = fs.readdirSync(path.dirname(`${DIR_PUB_KEY}/*/`)).map((fileName) => {      
     return {
       name: fileName.replace('-pub.key', '').replace(/^\w/, (c) => c.toUpperCase()),
       pubKey: fileName,

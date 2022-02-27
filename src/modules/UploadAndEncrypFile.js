@@ -1,7 +1,7 @@
 import { encryptFile } from './encrypt/EncryptFile'
 import { writeFileWithContent, deleteFile } from './upload/Upload';
+import { DIR_PUB_KEY } from '../../src/config'
 
-const DIR_PUB_KEY = './keys/'
 const DIR_UPLOAD = './uploads/'
 const EXCRYPT_EXTENSION = '.gpg'
 

@@ -33,10 +33,12 @@ const post = (req, res) => {
   }
 }
 
-export default (req, res) => {  
-  req.method === "POST"
-      ? post(req, res)
-      : () => {
-          res.status(404).send("Error !");
-        }
+export default (req, res) => {
+  switch(req.method) {
+    case "POST":
+      post(req, res)
+      break;    
+    default:
+      res.status(404).send("Error !");
+  }
 };

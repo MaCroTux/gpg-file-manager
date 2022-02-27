@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { PubKeySelector } from "../PubKeys/PubKeySelector";
 
 export default function UploadGpgFile({setFileUpload}) {
     const pubKey = useRef()
@@ -43,16 +44,7 @@ export default function UploadGpgFile({setFileUpload}) {
                     placeholder="Select file" />
             </div>
             
-            <select 
-                className="form-select"                 
-                aria-label="Select key pub"
-                ref={pubKey}
-                style={{margin: 5}}>
-                {
-                    [{pubKey: '', name: 'Select your pub key'}].map(
-                        ({pubKey, name}) => <option key={pubKey } value={pubKey}>{name}</option>)
-                }
-            </select>
+            <PubKeySelector pubKeyRef={pubKey}/>
             
             <div style={{textAlign:'right', marginTop:10}}>
                 <button

@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import UploadGpgFile from '../src/components/FileUpload/GpgFileUpload'
 import { useEffect, useRef, useState} from 'react'
-import FileHisotory from '../src/components/File/FileHisotory'
+import FileHistory from '../src/components/File/FileHistory'
 import { useRouter } from 'next/router'
 import Icon from '../src/components/Icon'
 import { render } from 'react-dom'
@@ -62,7 +62,7 @@ export default function Home() {
         <hr />
         <UploadGpgFile setFileUpload={setFileUpload}/>
         <hr />               
-        <FileHisotory list={list} setList={setList}/>
+        <FileHistory list={list} setList={setList}/>
       </main>
 
       <footer style={{textAlign: 'center', marginTop: 20}}>

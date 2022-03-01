@@ -2,6 +2,7 @@ import Icon from "../Icon"
 
 export default function FileItem ({name, size, pubKey, hash, download, downloadArea}) {
     const fileDownload = (element) => {
+        downloadArea.current.style.visibility = ''
         const gpgFile = element.currentTarget.getAttribute('data-download')        
         downloadArea.current.innerText = gpgFile
     }

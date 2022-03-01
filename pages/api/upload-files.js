@@ -10,15 +10,16 @@ export const config = {
 };
 
 const post = (req, res) => {
+  const host = req.headers.host
   try {
-    const form = new formidable.IncomingForm(); 
+    const form = new formidable.IncomingForm();
     
     form.parse(req, async (err, fields, files) => {
       const file = files.file.filepath
       const targetFileName = files.file.originalFilename
       const pubKey = fields?.pubKey || PUB_DEFAULT_KEY
 
-      UploadAndEncrypt(pubKey, file, targetFileName)
+      UploadAndEncrypt(host, pubKey, file, targetFileName)
         .then((response) => {
           return res.status(200).json(response)
         })

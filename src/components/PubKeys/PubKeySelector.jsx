@@ -7,7 +7,7 @@ export const PubKeySelector = ({pubKeyRef}) => {
 
     useEffect(() => {
         getKeyList()
-            .then((data) => setList([...list, ...data])) 
+            .then((data) => setList(list => list.concat(data))) 
             .catch((error) => {
                 console.error(error)
             })

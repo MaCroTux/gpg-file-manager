@@ -36,3 +36,4 @@ yarn-error.log*
 
 # File uploaded
 /public/uploads/
+file_db.json

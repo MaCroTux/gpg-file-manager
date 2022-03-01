@@ -9,7 +9,7 @@ export default function Home() {
 
   useEffect(() => {
     if (fileUpload) {
-      setList([...list, fileUpload])
+      setList((list) => list.concat([fileUpload]))
     }    
   }, [fileUpload])
 

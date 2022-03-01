@@ -26,8 +26,13 @@ export default function UploadGpgFile({setFileUpload}) {
             method: "POST",
             body
         });
+        const responseJson = await response.json();
+        if (responseJson.message) {
+            alert('File already exist')
+            return 
+        }
 
-        setFileUpload(await response.json())
+        setFileUpload(responseJson)
     };
 
     return (

@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import UploadGpgFile from '../src/components/FileUpload/GpgFileUpload'
 import { useEffect, useState } from 'react'
-import GetSavedFile from '../src/components/File/GetSavedFile'
+import FileHisotory from '../src/components/File/FileHisotory'
 
 export default function Home() {
   const [list, setList] = useState([])
@@ -33,7 +33,7 @@ export default function Home() {
         <hr />
         <UploadGpgFile setFileUpload={setFileUpload}/>
         <hr />               
-        <GetSavedFile list={list} setList={setList}/>
+        <FileHisotory list={list} setList={setList}/>
       </main>
 
       <footer style={{textAlign: 'center', marginTop: 20}}>

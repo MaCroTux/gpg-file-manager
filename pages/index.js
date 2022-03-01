@@ -29,7 +29,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1 style={{marginTop: 30}}>GPG Encript file</h1>
+        <h1 style={{marginTop: 30}}><i className="bi bi-file-earmark-lock2" style={{alignItems: 'baseline', marginLeft: 'right', color: 'cornflowerblue'}}></i> GPG Encript file</h1>
         <hr />
         <UploadGpgFile setFileUpload={setFileUpload}/>
         <hr />               

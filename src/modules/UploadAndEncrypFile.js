@@ -1,6 +1,6 @@
 import { encryptFile } from './encrypt/EncryptFile'
 import { writeFileWithContent, deleteFile } from './upload/Upload';
-import { ENCRYPT_EXT, DIR_UPLOAD_FILE, DIR_PUB_KEY, DB_FILE_NAME, downloadLinkCreator } from '../../src/config'
+import { ENCRYPT_EXT, DIR_UPLOAD_FILE, DIR_PUB_KEY, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw } from '../../src/config'
 import jsonfile from 'jsonfile'
 import crypto from 'crypto'
 
@@ -18,11 +18,13 @@ export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFil
         const hashNotAllow = db.map((item) => item.hash)
         
         if (hashNotAllow.find(hash => hash === fileHash) !== undefined) {
-            console.log('File already exist');
+            console.log('File already exist');            
             return {
                 name: fileUploadName,
                 download: downloadLinkCreator(host, fileUploadName, targetNewFileEncrypted),
                 message: `File not upload, already exist (${fileHash})`,
+                pubKey: clearPubKeyRaw(pubKey),
+                size: fs.statSync(fileUploadPath).size,
             }
         }
     } catch (error) {
@@ -38,6 +40,9 @@ export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFil
     return {
         name: fileUploadName,
         download: downloadLinkCreator(host, fileUploadName, targetNewFileEncrypted),
+        pubKey: clearPubKeyRaw(pubKey),
+        size: fs.statSync(fileUploadPath).size,
+        hash: fileHash
     }
 }
 

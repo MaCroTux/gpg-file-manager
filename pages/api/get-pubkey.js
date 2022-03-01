@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { DIR_PUB_KEY } from '../../src/config'
+import { DIR_PUB_KEY, clearPubKeyRaw } from '../../src/config'
 
 export const config = {
   api: {
@@ -11,7 +11,7 @@ export const config = {
 const get = async (req, res) => {
   let keyList = fs.readdirSync(path.dirname(`${DIR_PUB_KEY}/*/`)).map((fileName) => {      
     return {
-      name: fileName.replace('-pub.key', '').replace(/^\w/, (c) => c.toUpperCase()),
+      name: clearPubKeyRaw(fileName),
       pubKey: fileName,
     }    
   })

@@ -56,7 +56,7 @@ export default function UploadGpgFile({setFileUpload}) {
                     className="btn btn-primary"
                     type="submit"
                     onClick={uploadToServer}
-                >Send to server</button>
+                ><i className="bi-upload" style={{marginLeft: 'right', fontSize: '1.3rem', color: 'white'}}></i> Send to server</button>
             </div>
         </>
     )   

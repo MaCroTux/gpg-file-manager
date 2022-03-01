@@ -1,4 +1,4 @@
-export default function Icon ({iconName, iconAling = 'right', fontSize = '1.3rem', iconColor = 'cornflowerblue', children}) {
+export default function Icon ({iconName = 'info-circle', iconAling = 'right', fontSize = '1.3rem', iconColor = 'cornflowerblue', children}) {
     const iconClassName = 'bi bi-' + iconName
 
     return <>

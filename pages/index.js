@@ -1,11 +1,35 @@
 import Head from 'next/head'
 import UploadGpgFile from '../src/components/FileUpload/GpgFileUpload'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState} from 'react'
 import FileHisotory from '../src/components/File/FileHisotory'
+import { useRouter } from 'next/router'
+import Icon from '../src/components/Icon'
+import { render } from 'react-dom'
 
 export default function Home() {
   const [list, setList] = useState([])
   const [fileUpload, setFileUpload] = useState(null)
+  const router = useRouter()
+  const alertMessage = useRef()
+
+  useEffect(() => {
+    checkHealth()
+      .then((data) => {
+        if (data.length > 0) {
+          render(<Icon iconColor='orange'>Some file have problems</Icon>, alertMessage.current)
+        }
+        console.log('File health OK!')
+      })
+      .catch((error) => {
+          console.error(error)
+      })
+  }, [])
+
+  const checkHealth = async () => {  
+    const res = await fetch(`${router.basePath}/api/check-health-files`)
+    
+    return await res.json()
+  }
 
   useEffect(() => {
     if (fileUpload) {
@@ -29,7 +53,12 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1 style={{marginTop: 30}}><i className="bi bi-file-earmark-lock2" style={{alignItems: 'baseline', marginLeft: 'right', color: 'cornflowerblue'}}></i> GPG Encript file</h1>
+        <h1 style={{marginTop: 30}}>
+          <Icon iconName='file-earmark-lock2' fontSize=''>GPG Encript file</Icon>
+          <div>
+            <p style={{fontSize: '1.1rem', textAlign: 'right', color: 'orange'}} ref={alertMessage}></p>
+          </div>
+        </h1>
         <hr />
         <UploadGpgFile setFileUpload={setFileUpload}/>
         <hr />               

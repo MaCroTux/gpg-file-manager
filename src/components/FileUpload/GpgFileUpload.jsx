@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { PubKeySelector } from "../PubKeys/PubKeySelector";
+import Icon from "../Icon";
 
 export default function UploadGpgFile({setFileUpload}) {
     const pubKey = useRef()
@@ -56,7 +57,7 @@ export default function UploadGpgFile({setFileUpload}) {
                     className="btn btn-primary"
                     type="submit"
                     onClick={uploadToServer}
-                ><i className="bi-upload" style={{marginLeft: 'right', fontSize: '1.3rem', color: 'white'}}></i> Send to server</button>
+                ><Icon iconName='upload' iconColor='white'></Icon></button>
             </div>
         </>
     )   

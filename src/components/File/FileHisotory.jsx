@@ -22,7 +22,7 @@ export default function FileHisotory({list, setList}) {
 
     return (
         <div className="list-group">
-            <div style={{margin: 10}}><code ref={downloadArea}></code></div>
+            <div style={{margin: '30px 0px 30px 0px'}}><code style={{backgroundColor: '#eee', padding: 10, borderStyle: 'dotted', borderWidth: '2px'}} ref={downloadArea}></code></div>
             <a href="#" className="list-group-item list-group-item-action active" aria-current="true">
               File encrypt history
             </a>                 

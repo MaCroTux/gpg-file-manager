@@ -2,12 +2,13 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/router'
 
 export const PubKeySelector = ({pubKeyRef}) => {
-    const [list, setList] = useState([{pubKey: '', name: 'Select your pub key'}])
+    const pubKeyDefault = [{pubKey: '', name: 'Select your pub key'}]
+    const [list, setList] = useState([])
     const router = useRouter()    
 
     useEffect(() => {
         getKeyList()
-            .then((data) => setList(list => list.concat(data))) 
+            .then((data) => setList(list => list.concat(data ?? pubKeyDefault))) 
             .catch((error) => {
                 console.error(error)
             })

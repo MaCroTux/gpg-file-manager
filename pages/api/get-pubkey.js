@@ -13,7 +13,7 @@ const get = async (req, res) => {
     return {
       name: clearPubKeyRaw(fileName),
       pubKey: fileName,
-    }    
+    }
   })
 
   res.status(200).json(keyList)

@@ -39,7 +39,7 @@ const get = async (req, res) => {
   res.status(200).json(uploadList)
 };
 
-export default (req, res) => {
+const handler = (req, res) => {
   switch(req.method) {
     case "GET":
       get(req, res)
@@ -48,3 +48,5 @@ export default (req, res) => {
       res.status(404).send("Error !");
   }
 };
+
+export default handler

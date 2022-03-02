@@ -34,7 +34,7 @@ const post = (req, res) => {
   }
 }
 
-export default (req, res) => {
+const handler = (req, res) => {
   switch(req.method) {
     case "POST":
       post(req, res)
@@ -43,3 +43,5 @@ export default (req, res) => {
       res.status(404).send("Error !");
   }
 };
+
+export default handler

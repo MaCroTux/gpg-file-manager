@@ -5,6 +5,7 @@ import FileHistory from '../src/components/File/FileHistory'
 import { useRouter } from 'next/router'
 import Icon from '../src/components/Icon'
 import { render } from 'react-dom'
+import Navbar from '../src/components/Nav/Navbar'
 
 export default function Home() {
   const [list, setList] = useState([])
@@ -37,6 +38,8 @@ export default function Home() {
     }    
   }, [fileUpload])
 
+  const fnOnClick = () => alert('onClick')
+
   return (
     <div className='container'>
       <Head>
@@ -52,8 +55,14 @@ export default function Home() {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"/>
       </Head>
 
-      <main>
-        <h1 style={{marginTop: 30}}>
+      <main style={{marginTop: 20}}>
+        <Navbar>{[
+            {
+              text: 'Login', 
+              fnOnClick
+            }
+          ]}</Navbar>
+        <h1 style={{marginTop: 10}}>
           <Icon iconName='file-earmark-lock2' fontSize=''>GPG Encript file</Icon>
           <div>
             <p style={{fontSize: '1.1rem', textAlign: 'right', color: 'orange'}} ref={alertMessage}></p>

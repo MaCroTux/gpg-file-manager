@@ -6,6 +6,12 @@ export default function FileHistory({list, setList}) {
     const downloadArea = useRef()
     const router = useRouter()
 
+    const getList = async () => {  
+        const res = await fetch(`${router.basePath}/api/get-files`)
+        
+        return await res.json()
+    }    
+
     useEffect(() => {
         getList()
             .then((data) => setList(data)) 
@@ -13,12 +19,6 @@ export default function FileHistory({list, setList}) {
                 console.error(error)
             })
     }, [])
-
-    const getList = async () => {  
-        const res = await fetch(`${router.basePath}/api/get-files`)
-        
-        return await res.json()
-    }    
 
     return (
         <div className="list-group">            
@@ -32,7 +32,7 @@ export default function FileHistory({list, setList}) {
                     ? list.map(({name, download, size, pubKey, hash}) => <FileItem key={hash} name={name} download={download} size={size} pubKey={pubKey} hash={hash} downloadArea={downloadArea}/>)
                     : <li className="list list-group-item justify-content-between align-items-center">
                         <div>
-                            <div class='spinner'></div>
+                            <div className='spinner'></div>
                         </div>                        
                     </li>
                 }

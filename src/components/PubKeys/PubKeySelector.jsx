@@ -6,19 +6,19 @@ export const PubKeySelector = ({pubKeyRef}) => {
     const [list, setList] = useState([])
     const router = useRouter()    
 
+    const getKeyList = async () => {
+        const res = await fetch(`${router.basePath}/api/get-pubkey`)
+      
+        return await res.json()
+    }
+
     useEffect(() => {
         getKeyList()
             .then((data) => setList(list => list.concat(data ?? pubKeyDefault))) 
             .catch((error) => {
                 console.error(error)
             })
-    }, [])
-
-    const getKeyList = async () => {
-        const res = await fetch(`${router.basePath}/api/get-pubkey`)
-      
-        return await res.json()
-    }
+    }, [])    
     
     return (
         <select 

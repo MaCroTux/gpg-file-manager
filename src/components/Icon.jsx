@@ -2,6 +2,9 @@ export default function Icon ({iconName = 'info-circle', iconAling = 'right', fo
     const iconClassName = 'bi bi-' + iconName
 
     return <>
-        <i className={iconClassName} style={{marginLeft: iconAling, fontSize: fontSize, color: iconColor}}></i> {children}
+        <i 
+            className={iconClassName} 
+            style={{marginLeft: iconAling, fontSize: fontSize, color: iconColor, verticalAlign: 'middle'}}>
+        </i> {children}
     </>
 }

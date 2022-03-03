@@ -1,6 +1,6 @@
 import Icon from "../Icon"
 
-export default function FileItem ({name, size, pubKey, hash, download, downloadArea}) {
+export default function FileItem ({name, size, pubKey, hash, download, downloadArea, admin, onFileDelete}) {
     const fileDownload = (element) => {
         downloadArea.current.style.visibility = ''
         const gpgFile = element.currentTarget.getAttribute('data-download')        
@@ -24,7 +24,19 @@ export default function FileItem ({name, size, pubKey, hash, download, downloadA
                     style={{margin: 0, height: 32}}
                     >
                         <Icon iconName='cloud-download' iconColor='white' fontSize="1.1rem"></Icon>
-                </a> 
+                </a>
+                {
+                    admin ? <>
+                        &nbsp; <a href="#"
+                        data-hash={hash}
+                        type="button" 
+                        className="download btn btn-sm btn-danger"
+                        onClick={onFileDelete}
+                        style={{margin: 0, height: 32}}
+                        >
+                            <Icon iconName='trash' iconColor='white' fontSize="1.1rem"></Icon>
+                    </a> </> : ''
+                }
             </div>
         </div>
         <div className="row">

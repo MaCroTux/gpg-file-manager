@@ -10,8 +10,15 @@ import Navbar from '../src/components/Nav/Navbar'
 export default function Home() {
   const [list, setList] = useState([])
   const [fileUpload, setFileUpload] = useState(null)
+  const [admin, setAdmin] = useState(false)
   const router = useRouter()
   const alertMessage = useRef()
+
+  const checkHealth = async () => {  
+    const res = await fetch(`${router.basePath}/api/check-health-files`)
+    
+    return res.json()
+  }
 
   useEffect(() => {
     checkHealth()
@@ -24,13 +31,9 @@ export default function Home() {
       .catch((error) => {
           console.error(error)
       })
+    setAdmin(localStorage.getItem('jwt') || false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const checkHealth = async () => {  
-    const res = await fetch(`${router.basePath}/api/check-health-files`)
-    
-    return await res.json()
-  }
 
   useEffect(() => {
     if (fileUpload) {
@@ -38,7 +41,21 @@ export default function Home() {
     }    
   }, [fileUpload])
 
-  const fnOnClick = () => alert('onClick')
+  const onFileDelete = async (event) => {
+    let fileId = event.currentTarget.getAttribute('data-hash')    
+    const form = new FormData()
+    form.append('fileId', fileId)
+    form.append('jwt', admin)
+    const res = await fetch(`${router.basePath}/api/delete`, {
+      method: 'POST',
+      body: form
+    })  
+    
+    setList((items) => {
+      return items.filter((item) => item.hash !== fileId)
+    })
+
+  }
 
   return (
     <div className='container'>
@@ -56,12 +73,7 @@ export default function Home() {
       </Head>
 
       <main style={{marginTop: 20}}>
-        <Navbar>{[
-            {
-              text: 'Login', 
-              fnOnClick
-            }
-          ]}</Navbar>
+        <Navbar setAdmin={setAdmin}/>
         <h1 style={{marginTop: 10}}>
           <Icon iconName='file-earmark-lock2' fontSize=''>GPG Encript file</Icon>
           <div>
@@ -71,7 +83,7 @@ export default function Home() {
         <hr />
         <UploadGpgFile setFileUpload={setFileUpload}/>
         <hr />               
-        <FileHistory list={list} setList={setList}/>
+        <FileHistory list={list} setList={setList} admin={admin} onFileDelete={onFileDelete}/>
       </main>
 
       <footer style={{textAlign: 'center', marginTop: 20}}>

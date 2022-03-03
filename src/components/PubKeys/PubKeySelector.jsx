@@ -12,12 +12,13 @@ export const PubKeySelector = ({pubKeyRef}) => {
         return await res.json()
     }
 
-    useEffect(() => {
+    useEffect(() => {        
         getKeyList()
             .then((data) => setList(list => list.concat(data ?? pubKeyDefault))) 
             .catch((error) => {
                 console.error(error)
             })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])    
     
     return (

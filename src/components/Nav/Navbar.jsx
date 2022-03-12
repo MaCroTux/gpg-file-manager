@@ -1,12 +1,11 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
-import Metamask from '../../hook/Metamask';
+import { accountShortFormat, Metamask } from '../../hook/Metamask';
 
-export default function Navbar ({setAdmin}) {
+export default function Navbar ({setAdmin, metaAccount, setMetaAccount}) {
     const router = useRouter()
     const [login, setLogin] = useState(false)
-    const [metaAccount, setMetaAccount] = useState('')
     const {registerMetamaskCredential, metamaskLoggin} = Metamask(
         metaAccount, 
         setMetaAccount    
@@ -74,8 +73,6 @@ export default function Navbar ({setAdmin}) {
                 }
             })
     }
-
-    const accountShortFormat = (metaAccount) => metaAccount.substring(0,5) + '...' + metaAccount.substring(metaAccount.length-3, metaAccount.length)
 
     return <>    
         <ul className="nav justify-content-end nav-pills">

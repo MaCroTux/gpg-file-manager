@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
+    "@metamask/eth-sig-util": "^4.0.0",
     "formidable": "^2.0.1",
     "jsonfile": "^6.1.0",
     "jsonwebtoken": "^8.5.1",

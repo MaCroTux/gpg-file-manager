@@ -3,6 +3,7 @@ import { writeFileWithContent, deleteFile } from './upload/Upload';
 import { ENCRYPT_EXT, DIR_UPLOAD_FILE, DIR_PUB_KEY, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw } from '../../src/config'
 import jsonfile from 'jsonfile'
 import crypto from 'crypto'
+import { saveDataFileIntoJsonDb } from './upload/JsonDb';
 
 const fs = require('fs');
 
@@ -44,23 +45,4 @@ export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFil
         size: fs.statSync(fileUploadPath).size,
         hash: fileHash
     }
-}
-
-const saveDataFileIntoJsonDb = async (fileUploadName, fileUploadPath, pubKey, fileHash) => {
-    jsonfile.readFile(DB_FILE_NAME)
-        .then((db) => {                        
-            jsonfile.writeFile(DB_FILE_NAME, db.concat({
-                fileName: fileUploadName,
-                path: fileUploadPath,
-                pubKey: pubKey,
-                size: fs.statSync(fileUploadPath).size,
-                hash: fileHash
-            }))
-        }).catch(() => jsonfile.writeFile(DB_FILE_NAME, [{
-            fileName: fileUploadName,
-            path: fileUploadPath,
-            pubKey: pubKey,
-            size: fs.statSync(fileUploadPath).size,
-            hash: fileHash
-        }]))
 }

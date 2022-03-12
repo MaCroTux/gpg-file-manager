@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
-import { PubKeySelector } from "../PubKeys/PubKeySelector";
-import Icon from "../Icon";
+import { useRef, useState } from "react"
+import { PubKeySelector } from "../PubKeys/PubKeySelector"
+import Icon from "../Icon"
+import { getPubKey, encryptedMessageOnBase64 } from "../../hook/Metamask"
 
-export default function UploadGpgFile({setFileUpload}) {
+export default function UploadGpgFile({setFileUpload, metaAccount, admin}) {
     const pubKey = useRef()
     const [image, setImage] = useState(null);
     const [createObjectURL, setCreateObjectURL] = useState(null);
@@ -18,11 +19,44 @@ export default function UploadGpgFile({setFileUpload}) {
     const uploadToServer = async (event) => {
         const selectPubKey = pubKey.current
         const pubKeyValue = selectPubKey.options[selectPubKey.selectedIndex].value
-        const body = new FormData()
+        
+        if (pubKeyValue === 'metamask') {
+            const fReader = new FileReader()
+            fReader.addEventListener('loadend', async () => {
+                const itemPubKey = `pubKey_${metaAccount}`
+                const storagePubKey = localStorage.getItem(itemPubKey)
+                const body = new FormData()      
+                let encryptedMessage = ''
+                if (storagePubKey) {
+                    encryptedMessage = encryptedMessageOnBase64(storagePubKey, fReader.result)           
+                } else {                
+                    const encryptionPublicKey = await getPubKey(metaAccount)
+                    encryptedMessage = encryptedMessageOnBase64(encryptionPublicKey, fReader.result)
+                    localStorage.setItem(`pubKey_${metaAccount}`, encryptionPublicKey)                    
+                }             
+                body.append("pubKey", pubKeyValue)
+                body.append("fileEncryt", encryptedMessage)
+                body.append("fileName", image.name)
+                uploadForm(body)
+                    .then((responseJson) => setFileUpload(responseJson))    
+                    .catch((error) => alert('Error!'))
+            });
 
+            fReader.readAsText(image)
+
+            return
+        }
+
+        const body = new FormData()
         body.append("file", image)
         body.append("pubKey", pubKeyValue)
         
+        uploadForm(body)
+            .then((responseJson) => setFileUpload(responseJson))    
+            .catch((error) => alert('Error!'))
+    };
+
+    const uploadForm = async (body) => {
         const response = await fetch("/api/upload-files", {
             method: "POST",
             body
@@ -32,9 +66,9 @@ export default function UploadGpgFile({setFileUpload}) {
             alert('File already exist')
             return 
         }
-
-        setFileUpload(responseJson)
-    };
+        
+        return responseJson
+    }
 
     return (
         <>
@@ -50,7 +84,7 @@ export default function UploadGpgFile({setFileUpload}) {
                     placeholder="Select file" />
             </div>
             
-            <PubKeySelector pubKeyRef={pubKey}/>
+            <PubKeySelector pubKeyRef={pubKey} admin={admin}/>
             
             <div style={{textAlign:'right', marginTop:10}}>
                 <button

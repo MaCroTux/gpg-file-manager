@@ -11,6 +11,7 @@ export default function Home() {
   const [list, setList] = useState([])
   const [fileUpload, setFileUpload] = useState(null)
   const [admin, setAdmin] = useState(false)
+  const [metaAccount, setMetaAccount] = useState('')
   const router = useRouter()
   const alertMessage = useRef()
 
@@ -41,22 +42,6 @@ export default function Home() {
     }    
   }, [fileUpload])
 
-  const onFileDelete = async (event) => {
-    let fileId = event.currentTarget.getAttribute('data-hash')    
-    const form = new FormData()
-    form.append('fileId', fileId)
-    form.append('jwt', admin)
-    const res = await fetch(`${router.basePath}/api/delete`, {
-      method: 'POST',
-      body: form
-    })  
-    
-    setList((items) => {
-      return items.filter((item) => item.hash !== fileId)
-    })
-
-  }
-
   return (
     <div className='container'>
       <Head>
@@ -73,7 +58,7 @@ export default function Home() {
       </Head>
 
       <main style={{marginTop: 20}}>
-        <Navbar setAdmin={setAdmin}/>
+        <Navbar setAdmin={setAdmin} setMetaAccount={setMetaAccount} metaAccount={metaAccount}/>
         <h1 style={{marginTop: 10}}>
           <Icon iconName='file-earmark-lock2' fontSize=''>GPG Encript file</Icon>
           <div>
@@ -81,9 +66,9 @@ export default function Home() {
           </div>
         </h1>
         <hr />
-        <UploadGpgFile setFileUpload={setFileUpload}/>
+        <UploadGpgFile setFileUpload={setFileUpload} metaAccount={metaAccount} admin={admin}/>
         <hr />               
-        <FileHistory list={list} setList={setList} admin={admin} onFileDelete={onFileDelete}/>
+        <FileHistory list={list} setList={setList} admin={admin}/>
       </main>
 
       <footer style={{textAlign: 'center', marginTop: 20}}>

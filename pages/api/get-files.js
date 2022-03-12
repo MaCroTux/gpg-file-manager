@@ -1,4 +1,4 @@
-import { ENCRYPT_EXT, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw } from '../../src/config'
+import { ENCRYPT_EXT, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw, getLink } from '../../src/config'
 import jsonfile from 'jsonfile'
 
 export const config = {
@@ -17,7 +17,9 @@ const get = async (req, res) => {
       name: fileName,
       pubKey: clearPubKeyRaw(pubKey),
       size,
-      download: downloadLinkCreator(host, fileName, fileName.replace(ENCRYPT_EXT, '')),
+      download: clearPubKeyRaw(pubKey) === 'Metamask' 
+        ? getLink(host, fileName) 
+        : downloadLinkCreator(host, fileName, fileName.replace(ENCRYPT_EXT, '')),
       hash
     }
   }))

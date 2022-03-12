@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/router'
+import jsonwebtoken from "jsonwebtoken"
+import { accountShortFormat } from "../../hook/Metamask"
 
-export const PubKeySelector = ({pubKeyRef}) => {
+export const PubKeySelector = ({pubKeyRef, admin}) => {
     const pubKeyDefault = [{pubKey: '', name: 'Select your pub key'}]
     const [list, setList] = useState([])
     const router = useRouter()    
@@ -12,15 +14,36 @@ export const PubKeySelector = ({pubKeyRef}) => {
         return await res.json()
     }
 
+    const uniqueArray = (list1, list2) => {
+        let emptyList = []
+        list1.concat(list2)
+            .map((item) => JSON.stringify(item))
+            .forEach((element) => !emptyList.includes(element) ? emptyList.push(element) : null)
+
+        return emptyList.map((item) => JSON.parse(item))
+    }
+
     useEffect(() => {        
         getKeyList()
-            .then((data) => setList(list => list.concat(data ?? pubKeyDefault))) 
+            .then((list) => setList(listStatus => uniqueArray(list, listStatus)))
             .catch((error) => {
                 console.error(error)
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])    
-    
+    }, [])
+
+    useEffect(() => {
+        admin
+            ?   setList(list => {
+                    const listStatus = [...list, {
+                        pubKey: 'metamask',
+                        name: `Metamask Wallet (${accountShortFormat(jsonwebtoken.decode(admin).account)})`
+                    }]
+                    return uniqueArray(list, listStatus)
+                })
+            :   null
+    }, [admin])
+
     return (
         <select 
             className="form-select"

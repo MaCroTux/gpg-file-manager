@@ -19,7 +19,7 @@ const get = async (req, res) => {
       size,
       download: clearPubKeyRaw(pubKey) === 'Metamask' 
         ? getLink(host, fileName) 
-        : downloadLinkCreator(host, fileName, fileName.replace(ENCRYPT_EXT, '')),
+        : downloadLinkCreator(host, fileName.replace(ENCRYPT_EXT, ''), hash),
       hash
     }
   }))

@@ -1,5 +1,5 @@
 import jsonfile from "jsonfile"
-import { DB_FILE_NAME } from "../../config"
+import { DB_FILE_NAME, DIR_UPLOAD_FILE } from "../../config"
 import fs from 'fs'
 
 export const saveDataFileIntoJsonDb = async (fileUploadName, fileUploadPath, pubKey, fileHash) => {
@@ -9,14 +9,14 @@ export const saveDataFileIntoJsonDb = async (fileUploadName, fileUploadPath, pub
                 fileName: fileUploadName,
                 path: fileUploadPath,
                 pubKey: pubKey,
-                size: fs.statSync(fileUploadPath).size,
+                size: fs.statSync(DIR_UPLOAD_FILE + fileHash).size,
                 hash: fileHash
             }))
         }).catch(() => jsonfile.writeFile(DB_FILE_NAME, [{
             fileName: fileUploadName,
             path: fileUploadPath,
             pubKey: pubKey,
-            size: fs.statSync(fileUploadPath).size,
+            size: fs.statSync(DIR_UPLOAD_FILE + fileHash).size,
             hash: fileHash
         }]))
 }

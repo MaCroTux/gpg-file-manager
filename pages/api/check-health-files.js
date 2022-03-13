@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { DIR_UPLOAD_FILE, ENCRYPT_EXT, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw } from '../../src/config'
+import { DIR_UPLOAD_FILE, DB_FILE_NAME } from '../../src/config'
 import jsonfile from 'jsonfile'
 
 export const config = {
@@ -10,7 +10,7 @@ export const config = {
 };
 
 const get = async (req, res) => {
-  const db = jsonfile.readFileSync(DB_FILE_NAME).map((item) => item.fileName)
+  const db = jsonfile.readFileSync(DB_FILE_NAME).map((item) => item.hash)
   const fileFromUploads = fs.readdirSync(path.dirname(`${DIR_UPLOAD_FILE}/*/`))
 
   const dbDiff = db

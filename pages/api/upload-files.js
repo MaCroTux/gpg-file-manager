@@ -1,7 +1,7 @@
 import formidable from 'formidable';
 import fs from 'fs';
 import { UploadAndEncrypt } from "../../src/modules/UploadAndEncrypFile"
-import { clearPubKeyRaw, DIR_UPLOAD_FILE, downloadLinkCreator, METAMASK_ENCRYPT_EXT } from '../../src/config'
+import { clearPubKeyRaw, DIR_UPLOAD_FILE, downloadLinkCreator, getLink, METAMASK_ENCRYPT_EXT } from '../../src/config'
 import crypto from 'crypto'
 import { saveDataFileIntoJsonDb } from '../../src/modules/upload/JsonDb';
 
@@ -24,17 +24,17 @@ const post = (req, res) => {
       if ((fields.fileEncryt ?? false) && (fields.fileName ?? false)) {
         const data = fields.fileEncryt
         const fileName = fields.fileName
-        const fileUploadPath = DIR_UPLOAD_FILE + fileName + METAMASK_ENCRYPT_EXT
-        fs.writeFileSync(fileUploadPath, data)
         const sha1 = crypto.createHash('md5')
         const fileHash = sha1.update(data).digest('hex')
+        const fileUploadPath = DIR_UPLOAD_FILE + fileHash
+        fs.writeFileSync(fileUploadPath, data)        
         saveDataFileIntoJsonDb(fileName + METAMASK_ENCRYPT_EXT, fileUploadPath, pubKey, fileHash)
 
         return res.status(200).json({
           name: fileName + METAMASK_ENCRYPT_EXT,
           download: clearPubKeyRaw(pubKey) === 'Metamask' 
             ? getLink(host, fileName) 
-            : downloadLinkCreator(host, fileName + METAMASK_ENCRYPT_EXT, fileName),
+            : downloadLinkCreator(host, fileName, fileHash),
           pubKey: clearPubKeyRaw(pubKey),
           size: fs.statSync(fileUploadPath).size,
           hash: fileHash

@@ -9,10 +9,10 @@ const fs = require('fs');
 
 export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFileEncrypted) => {
     const fileUploadName = targetNewFileEncrypted + ENCRYPT_EXT
-    const fileUploadPath = DIR_UPLOAD_FILE + fileUploadName
-
-    const sha1 = crypto.createHash('md5')    
+    //const md5 = crypto.createHash('md5')      
+    const sha1 = crypto.createHash('sha1')    
     const fileHash = sha1.update(fs.readFileSync(fileToEncrypt)).digest('hex')
+    const fileSha1Name = DIR_UPLOAD_FILE + fileHash
 
     try {
         const db = await jsonfile.readFile(DB_FILE_NAME)
@@ -22,10 +22,11 @@ export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFil
             console.log('File already exist');            
             return {
                 name: fileUploadName,
-                download: downloadLinkCreator(host, fileUploadName, targetNewFileEncrypted),
+                download: downloadLinkCreator(host, targetNewFileEncrypted, fileHash),
                 message: `File not upload, already exist (${fileHash})`,
                 pubKey: clearPubKeyRaw(pubKey),
-                size: fs.statSync(fileUploadPath).size,
+                size: fs.statSync(fileSha1Name).size,
+                hash: fileHash
             }
         }
     } catch (error) {
@@ -33,16 +34,16 @@ export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFil
     }
 
     const encryptData = await encryptFile(DIR_PUB_KEY + pubKey, fileToEncrypt);
-    writeFileWithContent(fileUploadPath, encryptData)
+    writeFileWithContent(fileSha1Name, encryptData)
     deleteFile(fileToEncrypt)
 
-    saveDataFileIntoJsonDb(fileUploadName, fileUploadPath, pubKey, fileHash)
+    saveDataFileIntoJsonDb(fileUploadName, fileSha1Name, pubKey, fileHash)
 
     return {
         name: fileUploadName,
-        download: downloadLinkCreator(host, fileUploadName, targetNewFileEncrypted),
+        download: downloadLinkCreator(host, targetNewFileEncrypted, fileHash),
         pubKey: clearPubKeyRaw(pubKey),
-        size: fs.statSync(fileUploadPath).size,
+        size: fs.statSync(fileSha1Name).size,
         hash: fileHash
     }
 }

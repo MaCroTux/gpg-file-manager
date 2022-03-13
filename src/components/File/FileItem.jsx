@@ -3,8 +3,9 @@ import Icon from "../Icon"
 import { METAMASK_ENCRYPT_EXT } from '../../../src/config'
 import jsonwebtoken from "jsonwebtoken"
 import { download } from "../../modules/utils/downloadBlob"
+import router from "next/router"
 
-export default function FileItem ({name, size, pubKey, hash, downloadItem, admin, downloadArea}) {
+export default function FileItem ({name, size, pubKey, hash, downloadItem, admin, downloadArea, setList}) {
     const fileDownloadArea = (element) => {
         downloadArea.current.style.visibility = ''
         const gpgFile = element.currentTarget.getAttribute('data-download')        

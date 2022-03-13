@@ -45,7 +45,8 @@ export default function FileHistory({list, setList, admin}) {
                         pubKey={pubKey} 
                         hash={hash} 
                         downloadArea={downloadArea} 
-                        admin={admin}/>)
+                        admin={admin}
+                        setList={setList}/>)
                     : <li className="list list-group-item justify-content-between align-items-center">
                         <div>
                             <div className='spinner'style={{display: 'none'}} ref={spinner}></div>

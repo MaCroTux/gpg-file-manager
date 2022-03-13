@@ -33,11 +33,11 @@ export const PubKeySelector = ({pubKeyRef, admin}) => {
     }, [])
 
     useEffect(() => {
-        admin
+        (admin !== null && admin !== false)
             ?   setList(list => {
                     const listStatus = [...list, {
                         pubKey: 'metamask',
-                        name: `Metamask Wallet (${accountShortFormat(jsonwebtoken.decode(admin).account)})`
+                        name: `Metamask Wallet (${accountShortFormat(jsonwebtoken.decode(admin)?.account)})`
                     }]
                     return uniqueArray(list, listStatus)
                 })

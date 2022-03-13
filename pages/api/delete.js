@@ -22,8 +22,11 @@ const post = async (req, res) => {
     const fileToDelete = db.filter((item) => {
       return item.hash === fields.fileId
     })
-    
-    fs.unlinkSync(fileToDelete[0].path)
+    try {
+      fs.unlinkSync(fileToDelete[0].path)
+    } catch {
+
+    }
 
     jsonfile.writeFileSync(DB_FILE_NAME, db.filter((item) => {
       return item.hash !== fields.fileId

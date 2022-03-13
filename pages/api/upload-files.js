@@ -35,7 +35,6 @@ const post = (req, res) => {
           download: clearPubKeyRaw(pubKey) === 'Metamask' 
             ? getLink(host, fileName) 
             : downloadLinkCreator(host, fileName + METAMASK_ENCRYPT_EXT, fileName),
-//          download: downloadLinkCreator(host, fileName + METAMASK_ENCRYPT_EXT, fileName),
           pubKey: clearPubKeyRaw(pubKey),
           size: fs.statSync(fileUploadPath).size,
           hash: fileHash

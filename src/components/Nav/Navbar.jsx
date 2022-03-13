@@ -17,14 +17,18 @@ export default function Navbar ({setAdmin, metaAccount, setMetaAccount}) {
 
             metamaskLoggin(data.idDevice)
                 .then((data) => {
+                    if (!data?.sign) {
+                        return 
+                    }
                     let form = new FormData()
-                    form.append('sing', data.sing)
+                    form.append('sing', data.sign)
                     fetch(`${router.basePath}/api/login`, {
                         method: 'POST',
                         body: form
                     })
                     .then((result) => result.json())
                     .then((result) => {
+                        console.log(result.jwt)
                         localStorage.setItem('jwt', result.jwt)
                         localStorage.setItem('account', result.account)
                         setLogin(result.jwt)
@@ -59,9 +63,9 @@ export default function Navbar ({setAdmin, metaAccount, setMetaAccount}) {
         registerMetamaskCredential()
             .then(async (account) => {
                 let form = new FormData()
-                form.append('idDevice', metaAccount)
+                form.append('idDevice', account)
                 form.append('name', 'Metamask')
-                form.append('displayName', accountShortFormat(metaAccount))
+                form.append('displayName', accountShortFormat(account))
                 const result = await fetch(`${router.basePath}/api/register`, {
                     method: 'POST',
                     body: form
@@ -69,6 +73,12 @@ export default function Navbar ({setAdmin, metaAccount, setMetaAccount}) {
                 if (result.status == 400) {
                     setLogin(false)
                     alert('Device already registered')
+                    return
+                }
+
+                if (result.status == 200) {
+                    alert('Device registered')
+                    setMetaAccount(account)
                     return
                 }
             })

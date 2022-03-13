@@ -1,10 +1,13 @@
 import detectEthereumProvider from '@metamask/detect-provider'
 import { encrypt } from '@metamask/eth-sig-util'
+import MetamaskProvider from '../modules/EthProvider/MetamaskProvider'
 import { decode, encode } from '../modules/utils/base64'
 
 const TEXT_TO_SIGN_METAMASK = 'I register with accounts: '
 
 export const Metamask = () => {
+    const metamask = new MetamaskProvider()
+
     async function startApp() {
         const provider = await detectEthereumProvider();
         // If the provider returned by detectEthereumProvider is not the same as
@@ -20,73 +23,19 @@ export const Metamask = () => {
       }
 
     const registerMetamaskCredential = () => {
-        let connect = async () => {
-            try {
-                await startApp();            
-            } catch (error) {
-                console.log(error)
-            }
-
-            return ethereum
-                .request({ method: 'eth_accounts' })
-                .then((accounts) => {                    
-                    if (accounts.length === 0) {
-                        // MetaMask is locked or the user has not connected any accounts
-                        console.log('Please connect to MetaMask.'); 
-                        return 
-                    }
-
-                    return accounts[0]                                        
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-        }
-
-        return ethereum.request({ method: 'eth_requestAccounts' })
-            .then(() => connect())
-            .catch((error) => {
-                if (error.code == -32002) {
-                    alert('Connect metamask wallet or unlock')
-                }
-                console.log(error)
-            })
-        
+        return metamask.getAccount()
     }
 
-    const metamaskLoggin = (accountWithRegister) => {        
-        let connect = async (metaAccount) => {        
-            try {
-                await startApp();            
-            } catch (error) {
-                console.log(error)
-            }
-
-            //let web3 = new Web3(provider);
-            const textToSign = TEXT_TO_SIGN_METAMASK + metaAccount
-
-            return ethereum
-                .request({ 
-                    method: 'personal_sign',
-                    "params": [textToSign, metaAccount]
-                })
-                .then((sing) => ({sing: sing, account: metaAccount}))
-                .catch((error) => alert('Metamask accounts mismatch'))
+    const metamaskLoggin = async (accountWithRegister) => {
+        const account = await metamask.getAccount()
+        if (accountWithRegister.toUpperCase() !== account.toUpperCase()) {
+            console.log(`Metamask accounts ${account} and saved account ${accountWithRegister} allow is mismatch`);
+            alert('Metamask accounts and saved account allow is mismatch')
+            return
         }
 
-        return ethereum.request({ method: 'eth_requestAccounts' }).
-            then((accounts) => {
-                if (accountWithRegister !== accounts[0]) {
-                    console.log(`Metamask accounts ${accounts[0]} and saved account ${accountWithRegister} allow is mismatch`);
-                    alert('Metamask accounts and saved account allow is mismatch')
-                    return
-                }
-
-                return ethereum
-                    .request({ method: 'eth_accounts' })
-                    .then((accounts) => connect(accounts[0]).then((result) => result))
-                    .catch((error) => console.log(error))   
-            });        
+        const textToSign = TEXT_TO_SIGN_METAMASK + account
+        return await metamask.sign(textToSign)
     }
 
     return {registerMetamaskCredential, metamaskLoggin, startApp}
@@ -127,13 +76,8 @@ export const encryptedMessageOnBase64 = (encryptionPublicKey, dataToEncode) => {
 }
 
 export const decryptMessageOnBase64 = (encryptedMessage, metaAccount) => {
-    return ethereum
-        .request({
-            method: 'eth_decrypt',
-            params: [encryptedMessage, metaAccount],
-        })
-        .then((decryptedMessage) => decode(decryptedMessage))
-        .catch((error) => console.log(error.message));
+    const metamask = new MetamaskProvider()
+    return metamask.decryptMessageOnBase64(encryptedMessage, metaAccount)
 }
 
 export const accountShortFormat = (metaAccount) => 

@@ -5,6 +5,7 @@ export const ENCRYPT_EXT = '.gpg'
 export const METAMASK_ENCRYPT_EXT = '.eth'
 export const DIR_UPLOAD_FILE = './public/uploads/'
 export const DB_FILE_NAME = 'file_db.json'
+export const UPLOAD_PATH = PATH_UPLOAD
 
 export function downloadLinkCreator(host, originFileName, fileHash) {
     return `curl http://${host}/${PATH_UPLOAD}/${fileHash} | gpg --decrypt -o ${originFileName}`

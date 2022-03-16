@@ -1,5 +1,6 @@
-import { ENCRYPT_EXT, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw, getLink } from '../../src/config'
+import { UPLOAD_PATH, DIR_UPLOAD_FILE, DB_FILE_NAME } from '../../src/config'
 import jsonfile from 'jsonfile'
+import File from '../../src/modules/File'
 
 export const config = {
   api: {
@@ -12,16 +13,10 @@ const get = async (req, res) => {
 
   const db = jsonfile.readFileSync(DB_FILE_NAME)
 
-  res.status(200).json(db.map(({fileName, pubKey, size, hash}) => {
-    return {
-      name: fileName,
-      pubKey: clearPubKeyRaw(pubKey),
-      size,
-      download: clearPubKeyRaw(pubKey) === 'Metamask' 
-        ? getLink(host, fileName) 
-        : downloadLinkCreator(host, fileName.replace(ENCRYPT_EXT, ''), hash),
-      hash
-    }
+  res.status(200).json(db.map(({name, pubKey, hash}) => {
+    const file = new File(DIR_UPLOAD_FILE, name, hash, pubKey)
+
+    return file.getFile(host, UPLOAD_PATH)
   }))
 };
 

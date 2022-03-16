@@ -1,33 +1,27 @@
 import { encryptFile } from './encrypt/EncryptFile'
 import { writeFileWithContent, deleteFile } from './upload/Upload';
-import { ENCRYPT_EXT, DIR_UPLOAD_FILE, DIR_PUB_KEY, DB_FILE_NAME, downloadLinkCreator, clearPubKeyRaw } from '../../src/config'
+import { UPLOAD_PATH, ENCRYPT_EXT, DIR_UPLOAD_FILE, DIR_PUB_KEY, DB_FILE_NAME } from '../../src/config'
 import jsonfile from 'jsonfile'
 import crypto from 'crypto'
 import { saveDataFileIntoJsonDb } from './upload/JsonDb';
+import File from '../../src/modules/File'
 
 const fs = require('fs');
 
 export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFileEncrypted) => {
     const fileUploadName = targetNewFileEncrypted + ENCRYPT_EXT
-    //const md5 = crypto.createHash('md5')      
     const sha1 = crypto.createHash('sha1')    
     const fileHash = sha1.update(fs.readFileSync(fileToEncrypt)).digest('hex')
     const fileSha1Name = DIR_UPLOAD_FILE + fileHash
+    const file = new File(DIR_UPLOAD_FILE, targetNewFileEncrypted, fileHash, pubKey)
 
     try {
         const db = await jsonfile.readFile(DB_FILE_NAME)
-        const hashNotAllow = db.map((item) => item.hash)
-        
+        const hashNotAllow = db.map((item) => item.hash)        
+
         if (hashNotAllow.find(hash => hash === fileHash) !== undefined) {
-            console.log('File already exist');            
-            return {
-                name: fileUploadName,
-                download: downloadLinkCreator(host, targetNewFileEncrypted, fileHash),
-                message: `File not upload, already exist (${fileHash})`,
-                pubKey: clearPubKeyRaw(pubKey),
-                size: fs.statSync(fileSha1Name).size,
-                hash: fileHash
-            }
+            console.log('File already exist');
+            return file.getFile(host, UPLOAD_PATH)
         }
     } catch (error) {
         console.log(error)
@@ -37,13 +31,7 @@ export const UploadAndEncrypt = async (host, pubKey, fileToEncrypt, targetNewFil
     writeFileWithContent(fileSha1Name, encryptData)
     deleteFile(fileToEncrypt)
 
-    saveDataFileIntoJsonDb(fileUploadName, fileSha1Name, pubKey, fileHash)
-
-    return {
-        name: fileUploadName,
-        download: downloadLinkCreator(host, targetNewFileEncrypted, fileHash),
-        pubKey: clearPubKeyRaw(pubKey),
-        size: fs.statSync(fileSha1Name).size,
-        hash: fileHash
-    }
+    saveDataFileIntoJsonDb(host, file /*fileUploadName, fileSha1Name, pubKey, fileHash*/)
+    
+    return file.getFile(host, UPLOAD_PATH)
 }

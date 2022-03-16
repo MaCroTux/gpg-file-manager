@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import Icon from '../src/components/Icon'
 import { render } from 'react-dom'
 import Navbar from '../src/components/Nav/Navbar'
+import jsonwebtoken from 'jsonwebtoken'
 
 export default function Home() {
   const [list, setList] = useState([])
@@ -32,7 +33,15 @@ export default function Home() {
       .catch((error) => {
           console.error(error)
       })
-    setAdmin(localStorage.getItem('jwt') || false)
+    let jwt = localStorage.getItem('jwt') || false
+    //console.log(jwt && (jsonwebtoken.decode(jwt).exp < (new Date()).getTime()))
+    if (jwt && (jsonwebtoken.decode(jwt)?.exp < (new Date()).getTime())) {
+      jwt = false
+      localStorage.setItem('jwt', '')
+      localStorage.setItem('account', null)
+    }    
+    setAdmin(jwt)
+    setMetaAccount('')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

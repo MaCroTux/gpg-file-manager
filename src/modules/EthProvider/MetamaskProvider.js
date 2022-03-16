@@ -1,4 +1,5 @@
 import detectEthereumProvider from "@metamask/detect-provider";
+import { decode } from "../utils/base64";
 
 export default class MetamaskProvider {
     account = null

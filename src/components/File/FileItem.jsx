@@ -35,9 +35,9 @@ export default function FileItem ({name, size, pubKey, hash, downloadItem, admin
         if (element.getAttribute('data-type') === 'Metamask') {
             const result = await fetch(gpgFile)
             const metaAccount = jsonwebtoken.decode(admin).account
-            const fileDecrypt = await decryptMessageOnBase64(await result.text(), metaAccount)
-            console.log(fileDecrypt)
-            download(fileName.replace(METAMASK_ENCRYPT_EXT, ''), fileDecrypt)
+            const textData = await result.text()
+            const fileDecrypt = await decryptMessageOnBase64(textData, metaAccount)
+            download(fileName, fileDecrypt)
             return
         }
       }    

@@ -1,9 +1,10 @@
 import formidable from 'formidable';
 import fs from 'fs';
 import { UploadAndEncrypt } from "../../src/modules/UploadAndEncrypFile"
-import { clearPubKeyRaw, DIR_UPLOAD_FILE, downloadLinkCreator, getLink, METAMASK_ENCRYPT_EXT } from '../../src/config'
+import { UPLOAD_PATH, clearPubKeyRaw, DIR_UPLOAD_FILE, downloadLinkCreator, getLink, METAMASK_ENCRYPT_EXT } from '../../src/config'
 import crypto from 'crypto'
 import { saveDataFileIntoJsonDb } from '../../src/modules/upload/JsonDb';
+import File from '../../src/modules/File'
 
 const PUB_DEFAULT_KEY = 'yubikey-pub.key'
 
@@ -27,18 +28,11 @@ const post = (req, res) => {
         const sha1 = crypto.createHash('md5')
         const fileHash = sha1.update(data).digest('hex')
         const fileUploadPath = DIR_UPLOAD_FILE + fileHash
-        fs.writeFileSync(fileUploadPath, data)        
-        saveDataFileIntoJsonDb(fileName + METAMASK_ENCRYPT_EXT, fileUploadPath, pubKey, fileHash)
+        fs.writeFileSync(fileUploadPath, data)
+        const file = new File(DIR_UPLOAD_FILE, fileName, fileHash, pubKey)
+        saveDataFileIntoJsonDb(host, file /*fileName + METAMASK_ENCRYPT_EXT, fileUploadPath, pubKey, fileHash*/)
 
-        return res.status(200).json({
-          name: fileName + METAMASK_ENCRYPT_EXT,
-          download: clearPubKeyRaw(pubKey) === 'Metamask' 
-            ? getLink(host, fileName) 
-            : downloadLinkCreator(host, fileName, fileHash),
-          pubKey: clearPubKeyRaw(pubKey),
-          size: fs.statSync(fileUploadPath).size,
-          hash: fileHash
-        })
+        return res.status(200).json(file.getFile(host, UPLOAD_PATH))
       } else {
         const file = files.file.filepath
         const targetFileName = files.file.originalFilename

@@ -1,7 +1,7 @@
 import formidable from 'formidable';
 import verify from '../../src/modules/jwt/verify'
 import fs from 'fs'
-import {DB_FILE_NAME} from '../../src/config'
+import {DB_FILE_NAME, DIR_UPLOAD_FILE} from '../../src/config'
 import jsonfile from 'jsonfile';
 
 export const config = {
@@ -23,9 +23,9 @@ const post = async (req, res) => {
       return item.hash === fields.fileId
     })
     try {
-      fs.unlinkSync(fileToDelete[0].path)
-    } catch {
-
+      fs.unlinkSync(DIR_UPLOAD_FILE + fileToDelete[0].hash)
+    } catch (error) {
+      console.log(error)
     }
 
     jsonfile.writeFileSync(DB_FILE_NAME, db.filter((item) => {

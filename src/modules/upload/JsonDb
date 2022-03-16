@@ -1,22 +1,10 @@
 import jsonfile from "jsonfile"
-import { DB_FILE_NAME, DIR_UPLOAD_FILE } from "../../config"
-import fs from 'fs'
+import { DB_FILE_NAME, UPLOAD_PATH } from "../../config"
 
-export const saveDataFileIntoJsonDb = async (fileUploadName, fileUploadPath, pubKey, fileHash) => {
+export const saveDataFileIntoJsonDb = async (host, File) => {
+    const fileData = File.getFile(host, UPLOAD_PATH)
+
     jsonfile.readFile(DB_FILE_NAME)
-        .then((db) => {                        
-            jsonfile.writeFile(DB_FILE_NAME, db.concat({
-                fileName: fileUploadName,
-                path: fileUploadPath,
-                pubKey: pubKey,
-                size: fs.statSync(DIR_UPLOAD_FILE + fileHash).size,
-                hash: fileHash
-            }))
-        }).catch(() => jsonfile.writeFile(DB_FILE_NAME, [{
-            fileName: fileUploadName,
-            path: fileUploadPath,
-            pubKey: pubKey,
-            size: fs.statSync(DIR_UPLOAD_FILE + fileHash).size,
-            hash: fileHash
-        }]))
+        .then(db => jsonfile.writeFile(DB_FILE_NAME, db.concat(fileData)))
+        .catch(() => jsonfile.writeFile(DB_FILE_NAME, [fileData]))
 }

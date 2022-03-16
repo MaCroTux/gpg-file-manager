@@ -80,7 +80,13 @@ export const decryptMessageOnBase64 = (encryptedMessage, metaAccount) => {
     return metamask.decryptMessageOnBase64(encryptedMessage, metaAccount)
 }
 
-export const accountShortFormat = (metaAccount) => 
-    metaAccount.substring(0,5) + 
+export const accountShortFormat = (metaAccount) => {
+    console.log(typeof metaAccount)
+    if (typeof metaAccount !== 'string') {
+        return null
+    }
+
+    return metaAccount.substring(0,5) + 
         '...' + 
         metaAccount.substring(metaAccount.length-3, metaAccount.length)
+}

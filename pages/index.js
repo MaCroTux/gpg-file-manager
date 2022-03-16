@@ -2,9 +2,7 @@ import Head from 'next/head'
 import UploadGpgFile from '../src/components/FileUpload/GpgFileUpload'
 import { useEffect, useRef, useState} from 'react'
 import FileHistory from '../src/components/File/FileHistory'
-import { useRouter } from 'next/router'
 import Icon from '../src/components/Icon'
-import { render } from 'react-dom'
 import Navbar from '../src/components/Nav/Navbar'
 import jsonwebtoken from 'jsonwebtoken'
 
@@ -13,35 +11,18 @@ export default function Home() {
   const [fileUpload, setFileUpload] = useState(null)
   const [admin, setAdmin] = useState(false)
   const [metaAccount, setMetaAccount] = useState('')
-  const router = useRouter()
   const alertMessage = useRef()
 
-  const checkHealth = async () => {  
-    const res = await fetch(`${router.basePath}/api/check-health-files`)
-    
-    return res.json()
-  }
-
-  useEffect(() => {
-    checkHealth()
-      .then((data) => {
-        if (data.length > 0) {
-          render(<Icon iconColor='orange'>Some file have problems</Icon>, alertMessage.current)
-        }
-        console.log('File health OK!')
-      })
-      .catch((error) => {
-          console.error(error)
-      })
+  useEffect(() => {    
     let jwt = localStorage.getItem('jwt') || false
-    //console.log(jwt && (jsonwebtoken.decode(jwt).exp < (new Date()).getTime()))
+
     if (jwt && (jsonwebtoken.decode(jwt)?.exp < (new Date()).getTime())) {
       jwt = false
       localStorage.setItem('jwt', '')
       localStorage.setItem('account', null)
+      setAdmin(jwt)
+      setMetaAccount('')
     }    
-    setAdmin(jwt)
-    setMetaAccount('')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

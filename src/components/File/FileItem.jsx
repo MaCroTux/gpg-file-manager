@@ -1,6 +1,5 @@
 import { decryptMessageOnBase64 } from "../../hook/Metamask"
 import Icon from "../Icon"
-import { METAMASK_ENCRYPT_EXT } from '../../../src/config'
 import jsonwebtoken from "jsonwebtoken"
 import { download } from "../../modules/utils/downloadBlob"
 import router from "next/router"
@@ -18,20 +17,20 @@ export default function FileItem ({name, size, pubKey, hash, downloadItem, admin
         form.append('fileId', fileId)
         form.append('jwt', admin)
         const res = await fetch(`${router.basePath}/api/delete`, {
-          method: 'POST',
-          body: form
+            method: 'POST',
+            body: form
         })  
-        
+
         setList((items) => {
-          return items.filter((item) => item.hash !== fileId)
+            return items.filter((item) => item.hash !== fileId)
         })
-      }
+    }
     
-      const onFileDownload = async (event) => {    
+    const onFileDownload = async (event) => {    
         const element = event.currentTarget
         const gpgFile = element.getAttribute('data-download')     
         const fileName = element.getAttribute('data-filename')
-    
+
         if (element.getAttribute('data-type') === 'Metamask') {
             const result = await fetch(gpgFile)
             const metaAccount = jsonwebtoken.decode(admin).account
@@ -40,7 +39,18 @@ export default function FileItem ({name, size, pubKey, hash, downloadItem, admin
             download(fileName, fileDecrypt)
             return
         }
-      }    
+    }
+    
+    const hashShortFormat = (hash) => {
+        console.log(typeof hash)
+        if (typeof hash !== 'string') {
+            return null
+        }
+    
+        return hash.substring(0,12) + 
+            ' ... ' + 
+            hash.substring(hash.length-12, hash.length)
+    }
 
     return <li key={name} className="list list-group-item justify-content-between align-items-center">
         <div className="row">
@@ -79,7 +89,7 @@ export default function FileItem ({name, size, pubKey, hash, downloadItem, admin
         <div className="row">
             <div className="col-5 d-none d-sm-none d-md-block" style={{textAlign: 'left'}}>
                 <small style={{fontSize: '.7em', margin: 0, padding: 0}}>
-                    <Icon iconName='fingerprint' fontSize=".9rem">{hash}</Icon>
+                    <Icon iconName='fingerprint' fontSize=".9rem">{hashShortFormat(hash)}</Icon>
                 </small>
             </div>
             <div className="col-2 d-none d-sm-none d-md-block" style={{textAlign: 'left'}}>

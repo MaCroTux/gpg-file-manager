@@ -68,7 +68,7 @@ export const encryptedMessageOnBase64 = (encryptionPublicKey, dataToEncode) => {
                     publicKey: encryptionPublicKey,
                     data: encode(dataToEncode),
                     version: 'x25519-xsalsa20-poly1305',
-                })
+                }) 
             ),
             'utf8'
         )
@@ -81,7 +81,6 @@ export const decryptMessageOnBase64 = (encryptedMessage, metaAccount) => {
 }
 
 export const accountShortFormat = (metaAccount) => {
-    console.log(typeof metaAccount)
     if (typeof metaAccount !== 'string') {
         return null
     }

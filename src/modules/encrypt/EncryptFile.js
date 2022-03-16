@@ -1,17 +1,14 @@
-import fs from "fs";
 import * as openpgp from 'openpgp';
-import path from 'path'
 
-export const encryptFile = async (pubKeyFilePath, filePath) => {
-    const pubKey = fs.readFileSync(path.join(pubKeyFilePath));
+export const encryptFile = async (pubKeyData, fileData) => {
     const publicKey = await openpgp.readKeys(
         { 
-            armoredKeys: pubKey.toString() 
+            armoredKeys: pubKeyData.toString()
         }
     );
     const message = await openpgp.createMessage(
         { 
-            text: fs.readFileSync(path.join(filePath)).toString()
+            text: fileData.toString()
         }
     )
 

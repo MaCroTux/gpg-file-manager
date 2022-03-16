@@ -1,7 +1,7 @@
 import formidable from 'formidable';
 import fs from 'fs';
 import { UploadAndEncrypt } from "../../src/modules/UploadAndEncrypFile"
-import { UPLOAD_PATH, clearPubKeyRaw, DIR_UPLOAD_FILE, downloadLinkCreator, getLink, METAMASK_ENCRYPT_EXT } from '../../src/config'
+import { UPLOAD_PATH } from '../../src/config'
 import crypto from 'crypto'
 import { saveDataFileIntoJsonDb } from '../../src/modules/upload/JsonDb';
 import File from '../../src/modules/File'
@@ -13,6 +13,10 @@ export const config = {
     bodyParser: false
   }
 };
+
+const deleteFile = (filepath) => {
+    fs.unlinkSync(filepath);
+}
 
 const post = (req, res) => {
   const host = req.headers.host
@@ -27,18 +31,16 @@ const post = (req, res) => {
         const fileName = fields.fileName
         const sha1 = crypto.createHash('md5')
         const fileHash = sha1.update(data).digest('hex')
-        const fileUploadPath = DIR_UPLOAD_FILE + fileHash
-        fs.writeFileSync(fileUploadPath, data)
-        const file = new File(DIR_UPLOAD_FILE, fileName, fileHash, pubKey)
-        saveDataFileIntoJsonDb(host, file /*fileName + METAMASK_ENCRYPT_EXT, fileUploadPath, pubKey, fileHash*/)
+        const file = new File(fileName, data, fileHash, pubKey)
 
-        return res.status(200).json(file.getFile(host, UPLOAD_PATH))
+        saveDataFileIntoJsonDb(file)
+
+        return res.status(200).json(file.getFileShowData(host, UPLOAD_PATH))
       } else {
         const file = files.file.filepath
-        const targetFileName = files.file.originalFilename
-
-        UploadAndEncrypt(host, pubKey, file, targetFileName)
+        UploadAndEncrypt(host, pubKey, file, files.file.originalFilename)
           .then((response) => {
+            deleteFile(file)
             return res.status(200).json(response)
           })
           .catch((error) => {

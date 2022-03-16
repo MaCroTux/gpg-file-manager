@@ -1,4 +1,4 @@
-import { UPLOAD_PATH, DIR_UPLOAD_FILE, DB_FILE_NAME } from '../../src/config'
+import { UPLOAD_PATH, DB_FILE_NAME } from '../../src/config'
 import jsonfile from 'jsonfile'
 import File from '../../src/modules/File'
 
@@ -13,10 +13,10 @@ const get = async (req, res) => {
 
   const db = jsonfile.readFileSync(DB_FILE_NAME)
 
-  res.status(200).json(db.map(({name, pubKey, hash}) => {
-    const file = new File(DIR_UPLOAD_FILE, name, hash, pubKey)
+  res.status(200).json(db.map((rawData) => {
+    const file = File.fromRawDb(rawData)
 
-    return file.getFile(host, UPLOAD_PATH)
+    return file.getFileShowData(host, UPLOAD_PATH)
   }))
 };
 

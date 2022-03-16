@@ -1,8 +1,8 @@
 import jsonfile from "jsonfile"
-import { DB_FILE_NAME, UPLOAD_PATH } from "../../config"
+import { DB_FILE_NAME } from "../../config"
 
-export const saveDataFileIntoJsonDb = async (host, File) => {
-    const fileData = File.getFile(host, UPLOAD_PATH)
+export const saveDataFileIntoJsonDb = async (file) => {
+    const fileData = await file.getRawFileWithDataCompress()
 
     jsonfile.readFile(DB_FILE_NAME)
         .then(db => jsonfile.writeFile(DB_FILE_NAME, db.concat(fileData)))
